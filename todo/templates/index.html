@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        table{
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 15px;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        td{
+            width: 20px;
+        }
+        th{
+            background-color: #f8f9fa;;
+        }
+        .form-group{
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mt-3 mb-3">TODO LIST</h2>
+
+        <!-- from for adding new todo items -->
+        <form method = "post" class="row justify-content-center mb-4 form-group">
+            {% csrf_token %}
+            <div>{{ form.text }}</div>
+            <div>{{ form.name }}</div>
+            <div>{{ form.start_date }}</div>
+            <div>{{ form.completion_date }}</div>
+            <!-- <div>Completed: {{ form.is_completed}}</div> -->
+            <div><button type="submit" class="btn btn-primary"><i class="bi bi-plus-square"></i></button></div>
+        </form>
+
+        <!-- table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>TITLE</th>
+                    <th>ASSIGNED BY</th>
+                    <th>START DATE</th>
+                    <th>COMPLETION DATE</th>
+                    <th>COMPLETED</th>
+                    <th>ACTIONS</th>
+                    <th>DATE AND TIME</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in todo_items %}
+                <tr>
+                    <td>{{ item.text }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.start_date  }}</td>
+                    <td>{{ item.completion_date }}</td>
+                    <td>{{ item.is_completed|yesno:"Yes,No" }}</td>
+                    <td>
+                        <a href="{% url 'edit_todo_item' item.pk %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'delete_todo_item' item.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                    <td>
+                    {% if item.updated_at and item.updated_at != item.created_at  %}
+                         {{item.updated_at}}
+                    {% else %}
+                         {{ item.created_at }}
+                    {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
